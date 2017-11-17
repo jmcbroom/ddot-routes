@@ -4,10 +4,36 @@ import logo from './logo.svg';
 class Line extends Component {
   render() {
     return (
-      <button className="br2 ph3 pv2 mb2 dib white bg-dark-gray w-20">
-        {this.props.short.replace(/[0]{1,}/, '')} {this.props.long}
-      </button>
+      <li className="ph3 pv2 bb b--light-silver">
+        <span className='bg-dark-green white fw7 f5 w2 pv2 tc dib'>
+          {this.props.short.replace(/^[0]{1,}/, '')}
+        </span> 
+        <span className='tr pl1 f6 fw5 pl2'>
+          {this.props.long
+        }</span>
+      </li>
     )
+  }
+}
+
+class LineInput extends Component {
+  constructor(props) {
+    super(props);
+    this.handleChange = this.handleChange.bind(this);
+    this.state = {input: ''};
+  }
+
+  handleChange(e) {
+    this.setState({input: e.target.value});
+  }
+
+  render() {
+    const input = this.props.input;
+    return (
+        <input className='w-25'
+               value={input}
+               onChange={this.handleChange} />
+    );
   }
 }
 
@@ -30,11 +56,11 @@ class LinesGrid extends Component {
     const { lines } = this.state;
 
     return (
-      <div className="flex flex-wrap">
+      <ul class="list pl0 ml0 w-25 ba b--light-silver br3 ma2 vh-75 overflow-scroll">
         {lines.map(line =>
           <Line short={line.shortName} long={line.longName} />
         )}
-      </div>
+      </ul>
     )
   }
 }
@@ -43,6 +69,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
+        <LineInput />
         <LinesGrid />
       </div>
     );
