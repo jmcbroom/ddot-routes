@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 
 class Line extends Component {
   render() {
@@ -8,69 +7,85 @@ class Line extends Component {
         <span className='bg-dark-green white fw7 f5 w2 pv2 tc dib'>
           {this.props.short.replace(/^[0]{1,}/, '')}
         </span> 
+
         <span className='tr pl1 f6 fw5 pl2'>
-          {this.props.long
-        }</span>
+          {this.props.long}
+        </span>
       </li>
     )
   }
 }
 
 class LineInput extends Component {
-  constructor(props) {
-    super(props);
-    this.handleChange = this.handleChange.bind(this);
-    this.state = {input: ''};
-  }
-
-  handleChange(e) {
-    this.setState({input: e.target.value});
-  }
-
   render() {
-    const input = this.props.input;
     return (
         <input className='w-25'
-               value={input}
-               onChange={this.handleChange} />
+               value={this.props.input}
+               onChange={this.props.onSearchChange} />
     );
   }
 }
 
-class LinesGrid extends Component {
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      lines: []
-    }
-  }
-
-  componentDidMount() {
-    fetch('https://ddot-proxy-test.herokuapp.com/api/where/routes-for-agency/DDOT.json?key=BETA')
-      .then(response => response.json())
-      .then(d => this.setState({ lines: d.data.list}))
-  }
-
+class LinesList extends Component {
   render() {
-    const { lines } = this.state;
-
     return (
-      <ul class="list pl0 ml0 w-25 ba b--light-silver br3 ma2 vh-75 overflow-scroll">
-        {lines.map(line =>
-          <Line short={line.shortName} long={line.longName} />
+      <ul className="list pl0 ml0 w-25 ba b--light-silver br3 ma2 vh-75 overflow-scroll">
+        {this.props.lines.map(line =>
+          <Line key={line.shortName} short={line.shortName} long={line.longName} />
         )}
       </ul>
     )
   }
 }
 
+class LineSearch extends Component {
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      allLines: [],
+      filteredLines: [],
+      input: ''
+    }
+    this.handleSearchChange = this.handleSearchChange.bind(this)
+  }
+
+  componentDidMount() {
+    fetch('https://ddot-proxy-test.herokuapp.com/api/where/routes-for-agency/DDOT.json?key=BETA')
+      .then(response => response.json())
+      .then(d => this.setState({ allLines: d.data.list, filteredLines: d.data.list }))
+  }
+
+  handleSearchChange(event) {
+    const val = event.target.value
+    const matched = []
+    this.state.allLines.forEach(ln => {
+      if(
+          (ln.shortName.indexOf(val) > -1) || 
+          (ln.longName.indexOf(val.toUpperCase()) > -1)) {
+        matched.push(ln)
+      }
+    })
+    this.setState({ input: event.target.value })
+    this.setState({ filteredLines: matched })
+  }
+
+  render () {
+    return (
+      <div className="lineSearch">
+        <LineInput input={this.state.input} onSearchChange={this.handleSearchChange}/>
+        <LinesList lines={this.state.filteredLines} />
+      </div>
+    )
+  }
+}
+
+
 class App extends Component {
   render() {
     return (
       <div className="App">
-        <LineInput />
-        <LinesGrid />
+        <LineSearch />
       </div>
     );
   }
