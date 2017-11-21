@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 
 import TopNav from './components/TopNav';
 
@@ -11,7 +12,7 @@ class Line extends Component {
         </span> 
 
         <span className='tr pl1 f6 fw5 pl2'>
-          {this.props.long}
+          <Link to={`/${this.props.short}-${this.props.long}`}>{this.props.long}</Link>
         </span>
       </li>
     )
