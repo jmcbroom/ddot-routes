@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import TopNav from './components/TopNav';
+
 class Line extends Component {
   render() {
     return (
@@ -22,7 +24,7 @@ class LineInput extends Component {
         <input className='w-25'
                value={this.props.input}
                onChange={this.props.onSearchChange} />
-    );
+    )
   }
 }
 
@@ -47,6 +49,7 @@ class LineSearch extends Component {
       filteredLines: [],
       input: ''
     }
+
     this.handleSearchChange = this.handleSearchChange.bind(this)
   }
 
@@ -59,13 +62,15 @@ class LineSearch extends Component {
   handleSearchChange(event) {
     const val = event.target.value
     const matched = []
+
     this.state.allLines.forEach(ln => {
-      if(
+      if (
           (ln.shortName.indexOf(val) > -1) || 
           (ln.longName.indexOf(val.toUpperCase()) > -1)) {
         matched.push(ln)
       }
     })
+
     this.setState({ input: event.target.value })
     this.setState({ filteredLines: matched })
   }
@@ -73,18 +78,18 @@ class LineSearch extends Component {
   render () {
     return (
       <div className="lineSearch">
-        <LineInput input={this.state.input} onSearchChange={this.handleSearchChange}/>
+        <LineInput input={this.state.input} onSearchChange={this.handleSearchChange} />
         <LinesList lines={this.state.filteredLines} />
       </div>
     )
   }
 }
 
-
 class App extends Component {
   render() {
     return (
       <div className="App">
+        <TopNav />
         <LineSearch />
       </div>
     );
